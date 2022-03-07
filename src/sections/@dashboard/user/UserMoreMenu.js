@@ -1,18 +1,50 @@
 import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Backdrop, CircularProgress } from '@mui/material';
 // component
 import Iconify from '../../../components/Iconify';
-
+import axios from '../../../axios/axiosinstance'
+import { useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu({ id, updated }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [backdrop, setBackdrop] = useState(false)
+
+  const curentUser = useSelector(store => store.currentUser)
+
+  const deleteHandler = (id) => {
+
+    window.confirm("Are you sure to delete?")
+    const body = { id: [id] }
+    setBackdrop(true)
+    axios.delete("/admin/users/delete", {
+      params: {
+        ...body
+      }
+    }).then((response) => {
+      if (response.data) {
+        setIsOpen(false)
+        updated(id)
+        setBackdrop(false)
+      }
+    })
+  }
+
+  const ditHandler = () => {
+    console.log(id)
+  }
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={backdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
         <Iconify icon="eva:more-vertical-fill" width={20} height={20} />
       </IconButton>
@@ -27,15 +59,15 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
+        <MenuItem disabled={curentUser.id === id} onClick={() => { deleteHandler(id) }} sx={{ color: 'text.secondary' }}>
+          <ListItemIcon >
             <Iconify icon="eva:trash-2-outline" width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
+        <MenuItem onClick={() => { ditHandler(id) }} component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+          <ListItemIcon >
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />

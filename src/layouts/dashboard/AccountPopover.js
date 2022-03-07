@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
@@ -7,8 +7,12 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '
 import Iconify from '../../components/Iconify';
 import MenuPopover from '../../components/MenuPopover';
 //
-import account from '../../_mocks_/account';
-
+// import account from '../../_mocks_/account';
+import { useFormik, Form, FormikProvider } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from 'src/redux/actions';
+import axios from '../../axios/axiosinstance';
+import calllogout from './../../helpers/callLogout';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
@@ -20,7 +24,7 @@ const MENU_OPTIONS = [
   {
     label: 'Profile',
     icon: 'eva:person-fill',
-    linkTo: '#'
+    linkTo: 'profile'
   },
   {
     label: 'Settings',
@@ -32,18 +36,40 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+
+  const user = useSelector((store) => store.currentUser)
+
+
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-
+  const dispatch = useDispatch()
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+  const formik = useFormik({
+    initialValues: {},
+    onSubmit: () => {
 
+      axios.post("/user/logout").then((response) => {
+        if (response.data.success) {
+          console.log(response.data.success)
+          dispatch({ ...logout() })
+        }
+      }).catch(function (error) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            dispatch({ ...logout() })
+          };
+        }
+      })
+    }
+  })
+  const { handleSubmit } = formik;
   return (
-    <>
+    user === null ? <></> : <>
       <IconButton
         ref={anchorRef}
         onClick={handleOpen}
@@ -64,7 +90,7 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={user.avatar} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -75,10 +101,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {user.firstName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {user.email}
           </Typography>
         </Box>
 
@@ -106,9 +132,13 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
-            Logout
-          </Button>
+          <FormikProvider value={formik}>
+            <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+              <Button type="submit" fullWidth color="inherit" variant="outlined">
+                Logout
+              </Button>
+            </Form>
+          </FormikProvider>
         </Box>
       </MenuPopover>
     </>

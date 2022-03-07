@@ -6,7 +6,7 @@ import { Card, Stack, Link, Container, Typography } from '@mui/material';
 import AuthLayout from '../layouts/AuthLayout';
 // components
 import Page from '../components/Page';
-import { LoginForm } from '../sections/authentication/login';
+import LoginForm from '../sections/authentication/login';
 import AuthSocial from '../sections/authentication/AuthSocial';
 
 // ----------------------------------------------------------------------
@@ -42,10 +42,10 @@ export default function Login() {
   return (
     <RootStyle title="Login | Minimal-UI">
       <AuthLayout>
-        Don’t have an account? &nbsp;
+        {/* Don’t have an account? &nbsp;
         <Link underline="none" variant="subtitle2" component={RouterLink} to="/register">
           Get started
-        </Link>
+        </Link> */}
       </AuthLayout>
 
       <SectionStyle sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -59,7 +59,7 @@ export default function Login() {
         <ContentStyle>
           <Stack sx={{ mb: 5 }}>
             <Typography variant="h4" gutterBottom>
-              Sign in to Minimal
+              Sign in to Mobikaht Admin panel
             </Typography>
             <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
           </Stack>
@@ -67,19 +67,6 @@ export default function Login() {
 
           <LoginForm />
 
-          <Typography
-            variant="body2"
-            align="center"
-            sx={{
-              mt: 3,
-              display: { sm: 'none' }
-            }}
-          >
-            Don’t have an account?&nbsp;
-            <Link variant="subtitle2" component={RouterLink} to="register" underline="hover">
-              Get started
-            </Link>
-          </Typography>
         </ContentStyle>
       </Container>
     </RootStyle>

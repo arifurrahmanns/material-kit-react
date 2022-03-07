@@ -12,8 +12,13 @@ const sidebarConfig = [
     icon: getIcon('eva:pie-chart-2-fill')
   },
   {
-    title: 'user',
-    path: '/dashboard/user',
+    title: 'vendors',
+    path: '/dashboard/vendors',
+    icon: getIcon('fa-solid:store')
+  },
+  {
+    title: 'users',
+    path: '/dashboard/users',
     icon: getIcon('eva:people-fill')
   },
   {
