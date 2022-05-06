@@ -33,7 +33,8 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../../sections/@das
 
 import getFilename from '../../helpers/getfileName';
 import { Identity } from '@mui/base';
-import Newvendor from '../../sections/vendor/Newvendor';
+
+import NewUser from './../../sections/@dashboard/user/NewUser';
 
 
 
@@ -162,7 +163,7 @@ export default function Users() {
 
   if (USERLIST === null) {
     return (
-      <Page title={"Vendors | " + process.env.REACT_APP_Name}>
+      <Page title={"Users | " + process.env.REACT_APP_Name}>
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
@@ -299,7 +300,7 @@ export default function Users() {
       <Page title={"Users | " + process.env.REACT_APP_Name}>
         <Container>
 
-          <Newvendor updated={addedHandler} open={addNew} addNewClose={handleAddNew} />
+          <NewUser updated={addedHandler} open={addNew} addNewClose={handleAddNew} />
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
               Users
@@ -376,7 +377,7 @@ export default function Users() {
                               <Label
                                 variant="ghost"
                               >
-                                {status !== null ? sentenceCase(status) : ""}
+                                {status !== null ? sentenceCase(status) : "Draft"}
                               </Label>
                             </TableCell>
 

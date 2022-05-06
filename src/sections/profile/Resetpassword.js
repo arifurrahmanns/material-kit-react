@@ -16,7 +16,7 @@ function Resetpassword({ updated }) {
 
     const LoginSchema = Yup.object().shape({
         oldPwd: Yup.string().required('Old password is required'),
-        newPwd: Yup.string().min(8, "Password must be at least 4 characters.").required('New password is required')
+        newPwd: Yup.string().min(8, "Password must be at least 8 characters.").required('New password is required')
 
     });
 

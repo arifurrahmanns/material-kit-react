@@ -5,58 +5,46 @@ import { TextField, Stack, Alert, Button, Fab, InputAdornment, IconButton, Circu
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import MuiPhoneNumber from 'material-ui-phone-number';
-import axios from '../../axios/axiosinstance'
+import axios from '../../../axios/axiosinstance'
 import './style.css';
 import { LoadingButton } from '@mui/lab';
 import { sentenceCase } from 'change-case';
 import Iconify from 'src/components/Iconify';
 function NewUser({ open, addNewClose, updated }) {
-    const [users, setUsers] = useState([{}])
+
     const [alert, setAlert] = useState(false)
     const [loading, setLoading] = useState(false)
-    useEffect(() => {
-        axios.get("/admin/users").then(response => {
-            if (response.data) {
-                let data = []
-                response.data.success.forEach(element => {
-                    data.push({ value: element.id, label: element.firstName + " " + element.lastName })
-                });
-                setUsers(data)
-            }
-        })
-    }, [])
-
-
+    const [showPassword, setShowPassword] = useState(false);
     let LoginSchema = Yup.object().shape({
         // txt: Yup.string().email('Email must be a valid email address').required('Email is required') : Yup.string().required('This field is required'),
-        name: Yup.string().required('Please endter a valid name'),
+        firstName: Yup.string().required('Please endter a valid name'),
+        lastName: Yup.string().required('Please endter a valid name'),
         email: Yup.string().email('Email must be a valid email address').required('Email is required'),
         phone: Yup.string().test('len', 'Please enter a valid phone number', val => val ? val.length > 8 : false).required('This field is required'),
-        owner: Yup.number().required(),
-
+        password: Yup.string().min(8, "Password must be at least 8 characters.").required('New password is required')
 
     });
     const formik = useFormik({
         initialValues: {
-            name: "",
+            firstName: "",
+            lastName: "",
             email: "",
             phone: "",
-            owner: ""
+            password: ""
         },
         validationSchema: LoginSchema,
         onSubmit: (values, { setSubmitting }) => {
-            console.log(values)
             setSubmitting(true)
 
-            axios.post("admin/vendor/add", { name: values.name, email: values.email, phone: values.phone, owner_id: values.owner, }).then(response => {
+            axios.post("/admin/user/add", { firstName: values.firstName, lastName: values.lastName, email: values.email, phone: values.phone, password: values.password, }).then(response => {
                 if (response.data.success) {
                     updated(response.data.vendor_id)
-                    setAlert({ val: true, type: "success", msg: "Vendor added successfully." })
+                    setAlert({ val: true, type: "success", msg: "User added successfully." })
                     setSubmitting(false)
 
                 }
             }).catch(e => {
-
+                setSubmitting(false)
                 setAlert({ val: true, type: "error", msg: "Something went wrong, please try again." })
             })
 
@@ -81,18 +69,21 @@ function NewUser({ open, addNewClose, updated }) {
         fileInput.current.click()
     }
 
-    const submitImport = (e) => {
-        setLoading(true)
-        const file = new FormData()
-        file.append("file", e.target.files[0], e.target.files[0].name)
-        axios.post("admin/vendor/import", file).then((response) => {
-            if (response.data) {
-                setLoading(!true)
-                setAlert({ val: true, type: "success", msg: "Vendor imported successfully." })
-                updated(response.data.vendor_id)
-            }
-        })
-    }
+    // const submitImport = (e) => {
+    //     setLoading(true)
+    //     const file = new FormData()
+    //     file.append("file", e.target.files[0], e.target.files[0].name)
+    //     axios.post("admin/vendor/import", file).then((response) => {
+    //         if (response.data) {
+    //             setLoading(!true)
+    //             setAlert({ val: true, type: "success", msg: "Vendor imported successfully." })
+    //             updated(response.data.vendor_id)
+    //         }
+    //     })
+    // }
+    const handleShowPassword = () => {
+        setShowPassword((show) => !show);
+    };
     return (
 
         <>
@@ -110,13 +101,13 @@ function NewUser({ open, addNewClose, updated }) {
             >
                 <Box sx={{ p: 3, position: "absolute", borderRadius: "10px", top: "50%", left: "50%", background: "#fff", overflow: "hidden", transform: "translate(-50% , -50%)", maxWidth: "500px", width: "100%" }}>
                     <Typography variant="h4" sx={{ mb: 2 }}>
-                        Add New Vendor
+                        Add New User
                     </Typography>
                     <FormikProvider value={formik}>
                         <Form>
                             <TextField
                                 fullWidth
-                                autoComplete="name"
+                                autoComplete="firstName"
                                 type={"text"}
                                 InputProps={{
                                     endAdornment: (
@@ -124,14 +115,30 @@ function NewUser({ open, addNewClose, updated }) {
 
                                         </InputAdornment>)
                                 }}
-                                value={values.name}
-                                label={"Venodor Name"}
-                                {...getFieldProps('name')}
-                                error={Boolean(touched.name && errors.name)}
-                                helperText={touched.name && errors.name}
+                                value={values.firstName}
+                                label={"First Name"}
+                                {...getFieldProps('firstName')}
+                                error={Boolean(touched.firstName && errors.firstName)}
+                                helperText={touched.firstName && errors.firstName}
                                 sx={{ mt: 3 }}
                             />
+                            <TextField
+                                fullWidth
+                                autoComplete="lastName"
+                                type={"text"}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
 
+                                        </InputAdornment>)
+                                }}
+                                value={values.lastName}
+                                label={"Last Name"}
+                                {...getFieldProps('lastName')}
+                                error={Boolean(touched.lastName && errors.lastName)}
+                                helperText={touched.lastName && errors.lastName}
+                                sx={{ mt: 3 }}
+                            />
                             <TextField
                                 fullWidth
                                 autoComplete="email"
@@ -143,7 +150,7 @@ function NewUser({ open, addNewClose, updated }) {
                                         </InputAdornment>)
                                 }}
                                 value={values.email}
-                                label={"Venodor Email"}
+                                label={"Email"}
                                 {...getFieldProps('email')}
                                 error={Boolean(touched.email && errors.email)}
                                 helperText={touched.email && errors.email}
@@ -158,7 +165,7 @@ function NewUser({ open, addNewClose, updated }) {
                                 error={Boolean(touched.phone && errors.phone)}
                                 helperText={touched.phone && errors.phone} defaultCountry={'us'}
                                 sx={{ mt: 3 }}
-                                label={"Venodor phone"}
+                                label={"Phone"}
                                 variant="outlined"
                                 InputProps={{
                                     endAdornment: (
@@ -168,31 +175,24 @@ function NewUser({ open, addNewClose, updated }) {
                                 }}
                             />
 
-                            <Autocomplete
-                                disablePortal
-                                sx={{ p: 0, mt: 3 }}
-                                id="combo-box-demo"
-                                onChange={(event, value) => handleChange(value.value)}
-                                renderOption={(props, option) => {
-                                    return (
-                                        <li {...props} key={option.value}>
-                                            {option.label}
-                                        </li>
-                                    );
+                            <TextField
+                                fullWidth
+                                type={showPassword ? 'text' : 'password'}
+                                value={values.password}
+                                label="Password"
+                                sx={{ mt: 3 }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleShowPassword} edge="end">
+                                                <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
                                 }}
-                                options={users}
-                                renderInput={(params) => {
-                                    return < TextField
-                                        id='combo-box-demo'
-                                        autoComplete="owner"
-                                        {...params}
-                                        label={"Owner"}
-                                        onChange={(e) => handleChange}
-                                        error={Boolean(touched.owner && errors.owner)}
-                                        helperText={touched.owner && errors.owner}
-                                        {...getFieldProps('owner')}
-                                    />
-                                }}
+                                {...getFieldProps('password')}
+                                error={Boolean(touched.password && errors.password)}
+                                helperText={touched.password && errors.password}
                             />
                             <LoadingButton
                                 fullWidth
@@ -202,16 +202,16 @@ function NewUser({ open, addNewClose, updated }) {
                                 loading={isSubmitting}
                                 sx={{ mt: 3, py: 3.5 }}
                             >
-                                Add Vendor
+                                Add User
                             </LoadingButton>
                         </Form>
                     </FormikProvider>
-                    <Divider sx={{ my: 3 }}>
+                    {/* <Divider sx={{ my: 3 }}>
                         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                             OR
                         </Typography>
-                    </Divider>
-                    <label htmlFor="importFile">
+                    </Divider> */}
+                    {/* <label htmlFor="importFile">
 
                         <LoadingButton
                             fullWidth
@@ -225,7 +225,7 @@ function NewUser({ open, addNewClose, updated }) {
                             Import form CSV
                         </LoadingButton>
                         <input accept=".csv, text/csv" onChange={submitImport} ref={fileInput} type="file" style={{ display: "none" }} id='importFile' />
-                    </label>
+                    </label> */}
                 </Box>
             </Modal>
         </>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
-import { TextField, Stack, Alert, Button, Fab, InputAdornment, IconButton, CircularProgress, Icon, ButtonBase, Snackbar } from '@mui/material';
+import { TextField, Stack, Alert, Button, Fab, InputAdornment, IconButton, CircularProgress, Icon, ButtonBase, Snackbar, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import './style.css';
 import Iconify from './../../components/Iconify';
 import { Typography } from '@mui/material';
@@ -12,7 +12,7 @@ import axios from '../../axios/axiosinstance';
 
 
 function Formfilelds(props) {
-
+    const [roleChanged, setRoleChanged] = useState(false)
     const [error, setError] = useState()
     const [open, setOpen] = useState(false)
     const [alert, setAlert] = useState({ type: "sucess", message: "" })
@@ -84,52 +84,85 @@ function Formfilelds(props) {
     const changeVinputVal = (e) => {
         setFieldValue("txt", e)
     }
+
+    const roleSelectHandler = (e) => {
+        setRoleChanged(true)
+        setFieldValue("txt", e.target.value)
+    }
     return (
         <Stack sx={{ my: 4 }}>
             <FormikProvider value={formik}>
                 <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
 
                     <Stack direction="row" gap="10px" alignItems="center" justifyContent="space-between">
-                        {props.type === "tel" && update ?
-                            <MuiPhoneNumber
-                                value={values.txt}
-                                {...getFieldProps('txt')}
-                                fullWidth style={{ maxHeight: "200px" }}
-                                focused={update}
-                                onChange={(e) => { changeVinputVal(e) }}
-                                error={Boolean(touched.txt && errors.txt)}
-                                helperText={touched.txt && errors.txt} defaultCountry={'us'}
-                                variant="outlined"
-                                label={"Venodor Phone"}
-                                InputProps={{
-                                    readOnly: !update,
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            {updateButton}
-                                        </InputAdornment>)
-                                }}
-                            /> :
+                        {props.update === "status" ? <FormControl fullWidth >
+                            <InputLabel id="role-simple-select-label">{props.label}</InputLabel>
+                            <Stack direction={"row"}>
+                                <Select
+                                    labelId="role-simple-select-label"
+                                    id="role-simple-select"
+                                    value={values.txt}
+
+                                    label={props.label}
+                                    fullWidth
+                                    onChange={(e) => roleSelectHandler(e)}
 
 
 
-                            <TextField
-                                fullWidth
-                                autoComplete="username"
-                                type={props.type}
-                                focused={update}
-                                InputProps={{
-                                    readOnly: !update,
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            {updateButton}
-                                        </InputAdornment>)
-                                }}
-                                value={values.txt}
-                                label={props.label}
-                                {...getFieldProps('txt')}
-                                error={Boolean(touched.txt && errors.txt)}
-                                helperText={touched.txt && errors.txt}
-                            />}
+                                >
+                                    <MenuItem value="active">Active</MenuItem>
+                                    <MenuItem value="under review">Under Review</MenuItem>
+                                    <MenuItem value="banned">Banned</MenuItem>
+
+
+                                </Select>
+                                <LoadingButton loading={isSubmitting} type="submit" sx={{ display: !roleChanged ? "none" : "block" }}>
+                                    Save
+                                </LoadingButton>
+                            </Stack>
+
+                        </FormControl> :
+
+                            props.type === "tel" && update ?
+                                <MuiPhoneNumber
+                                    value={values.txt}
+                                    {...getFieldProps('txt')}
+                                    fullWidth style={{ maxHeight: "200px" }}
+                                    focused={update}
+                                    onChange={(e) => { changeVinputVal(e) }}
+                                    error={Boolean(touched.txt && errors.txt)}
+                                    helperText={touched.txt && errors.txt} defaultCountry={'us'}
+                                    variant="outlined"
+                                    label={"Venodor Phone"}
+                                    InputProps={{
+                                        readOnly: !update,
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                {updateButton}
+                                            </InputAdornment>)
+                                    }}
+                                /> :
+
+
+
+                                <TextField
+                                    fullWidth
+                                    autoComplete="username"
+                                    type={props.type}
+                                    focused={update}
+                                    InputProps={{
+                                        readOnly: !update,
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                {updateButton}
+                                            </InputAdornment>)
+                                    }}
+                                    value={values.txt}
+                                    label={props.label}
+                                    {...getFieldProps('txt')}
+                                    error={Boolean(touched.txt && errors.txt)}
+                                    helperText={touched.txt && errors.txt}
+                                />}
 
 
                     </Stack>

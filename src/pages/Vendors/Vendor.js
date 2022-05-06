@@ -46,22 +46,9 @@ function Vendor() {
         </div>
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     return (
 
-        <Page title={"Dashboard: " + vendor.vendorName + " | " + process.env.REACT_APP_Name}>
+        <Page title={"VENDOR - " + vendor.vendorName + " | " + process.env.REACT_APP_Name}>
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
@@ -103,15 +90,24 @@ function Vendor() {
 
                     <Stack sx={{ px: 4, }} direction="row" gap="30px">
                         <div style={{ width: "100%" }}>
-                            <TextField sx={{ mt: 4 }} label="Owner" fullWidth value={vendor.user.firstName + " " + vendor.user.lastName} InputProps={{
-                                readOnly: true,
+                            {vendor.user !== null ?
+                                <TextField sx={{ mt: 4 }} label="Owner" fullWidth value={vendor.user.firstName + " " + vendor.user.lastName} InputProps={{
+                                    readOnly: true,
 
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Iconify icon="bx:user" />
-                                    </InputAdornment>)
-                            }}>
-                            </TextField>
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Iconify icon="bx:user" />
+                                        </InputAdornment>)
+                                }}>
+                                </TextField> :
+                                <Label
+                                    variant="ghost"
+                                    color={'error'}
+                                >
+                                    {sentenceCase("not found")}
+                                </Label>
+                            }
+
                         </div>
                         <div style={{ width: "100%" }}>
                             <Formfilelds updated={updated} type="text" update="name" label="Vendor Name" id={vendor.id} initial={vendor.vendorName} />
@@ -126,6 +122,13 @@ function Vendor() {
                         </div>
                         <div style={{ width: "100%" }}>
                             <Formfilelds updated={updated} type="tel" update="phone" label="Vendor Phone" id={vendor.id} initial={vendor.vendorPhone} />
+                        </div>
+                    </Stack>
+
+                    <Stack sx={{ px: 4, mt: -3 }} direction="row" gap="30px">
+
+                        <div style={{ width: "100%" }}>
+                            <Formfilelds updated={updated} type="select" update="status" label="Vendor Status" id={vendor.id} initial={vendor.status} />
                         </div>
                     </Stack>
                 </Box>

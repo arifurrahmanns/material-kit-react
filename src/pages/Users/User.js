@@ -52,7 +52,7 @@ function User() {
 
     return (
         account != null ?
-            <Page sx={{ mt: 3 }} title={account.firstName + " " + account.lastName + " | " + process.env.REACT_APP_Name}>
+            <Page sx={{ mt: 3 }} title={"USER - " + account.firstName + " " + account.lastName + " | " + process.env.REACT_APP_Name}>
 
                 <Container sx={{ maxWidth: "600px !important" }}>
                     <Typography variant="h4" sx={{ mb: 5, textAlign: "center" }} gutterBottom>
@@ -83,7 +83,9 @@ function User() {
                         <Formfileld type="text" updated={updated} update="lastName" id={id} label="Last Name" initial={account.lastName} />
                         <Formfileld type="tel" updated={updated} update="phone" id={id} label="Phone Number" initial={account.phone} />
                         <Formfileld type="email" updated={updated} update="email" id={id} label="Email Address" initial={account.email} />
-                        <Formfileld type="select" updated={updated} update="role" id={id} label="Role" initial={account.role} />
+                        <Formfileld type="select" updated={updated} update="role" id={id} label="Account Role" initial={account.role} />
+                        <Formfileld type="select" updated={updated} update="status" id={id} label="Account Staus" initial={account.status === null ? "draft" : account.status} />
+
                         <Typography variant="h5" sx={{ mb: 3 }}>
                             Security
                         </Typography>
