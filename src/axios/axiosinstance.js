@@ -3,7 +3,7 @@ import store from './../redux/store';
 
 
 const instance = axios.create({
-    baseURL: "http://localhost:8000/",
+    baseURL: "http://api.rootlandings.com/",
 })
 store.subscribe(listener)
 let token = store.getState().auth

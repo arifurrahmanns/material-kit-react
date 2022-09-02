@@ -3,7 +3,6 @@ const jsCookie = require("js-cookie");
 
 
 const initialState = {
-
     id: "",
     firstName: "",
     lastName: "",
@@ -13,7 +12,6 @@ const initialState = {
     avatar: "",
     status: "",
     role: "",
-
 }
 
 const CurrentUser = (state = initialState, action) => {
